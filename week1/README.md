@@ -1,3 +1,5 @@
+CANDIDATE ELIMINATION ALGORITHM
+
 1.	This program is for Candidate Elimination Algorithm. It is a concept of learning algorithm in Machine Learning. It gives the result of both specific hypotheses and general hypotheses based on the input data.
 2.	The input data is provided as CSV file.
 3.	The programming language used is Python. Required libraries are NumPy, Pandas, Stream lit.
