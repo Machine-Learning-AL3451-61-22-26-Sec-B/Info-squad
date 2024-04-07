@@ -14,4 +14,4 @@ ID3 ALGORITHM
 
 Streamlit Link: https://exer22.streamlit.app/
 
-Medium Link:
+Medium Link: https://medium.com/@vaishnavisathiyamoorthy/id3-algorithm-fffd1f042abd
