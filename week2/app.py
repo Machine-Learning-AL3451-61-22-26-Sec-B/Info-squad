@@ -1,8 +1,7 @@
-!sudo pip3 install scikit-learn
 import streamlit as st
 import pandas as pd
 import numpy as np
-import sklearn
+import scikit-learn
 
 from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import train_test_split
