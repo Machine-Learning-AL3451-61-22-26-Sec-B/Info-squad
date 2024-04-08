@@ -18,6 +18,7 @@ Execute the Python file `app.py` and pass the path of the dataset as an argument
 
 ```bash
 python app.py trainingdata.csv
+```
 
 ## Functionality:
 
