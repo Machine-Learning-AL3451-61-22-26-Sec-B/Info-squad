@@ -46,3 +46,8 @@ Backpropagation is widely used in various applications including image recogniti
 
 
 streamlit ---   https://backpropagat.streamlit.app/
+
+## Links:
+
+- [Streamlit App](https://backpropagat.streamlit.app/)
+- [Medium Article](https://medium.com/@vaishnavisathiyamoorthy/backprobagation-algorithm-5198d0c7065d)
