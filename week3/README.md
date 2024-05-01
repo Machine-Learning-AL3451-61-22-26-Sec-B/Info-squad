@@ -44,9 +44,6 @@ Backpropagation is widely used in various applications including image recogniti
 - "Neural Networks and Deep Learning" by Michael Nielsen
 - "Deep Learning" by Ian Goodfellow, Yoshua Bengio, and Aaron Courville
 
-
-streamlit ---   https://backpropagat.streamlit.app/
-
 ## Links:
 
 - [Streamlit App](https://backpropagat.streamlit.app/)
