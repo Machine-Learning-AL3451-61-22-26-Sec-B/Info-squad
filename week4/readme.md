@@ -63,3 +63,7 @@ To use the application, follow these steps:
 
 This Streamlit web application provides a user-friendly interface for credit card fraud detection, allowing users to analyze datasets, train machine learning models, and evaluate model performance.
 
+## Links:
+- [Streamlit App](https://backpropagat.streamlit.app/)
+- [Medium Article](https://medium.com/@vaishnavisathiyamoorthy/backprobagation-algorithm-5198d0c7065d)
+
