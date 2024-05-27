@@ -38,5 +38,5 @@ Contributions are welcome! If you have suggestions or find any issues, feel free
 
 ## Links:
 - [Streamlit App](https://backpropagat.streamlit.app/)
-- [Medium Article](https://medium.com/@vaishnavisathiyamoorthy/backprobagation-algorithm-5198d0c7065d)
+- [Medium Article](https://medium.com/@vikramkaruppannan6807/bayesian-network-87411aa4c641)
 
