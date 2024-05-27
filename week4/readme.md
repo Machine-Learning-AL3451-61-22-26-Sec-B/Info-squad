@@ -1,50 +1,65 @@
-# Backpropagation Algorithm Implementation
+# Credit Card Fraud Detection
 
-## Introduction
-Backpropagation is a supervised learning algorithm used for training artificial neural networks. It's a key component in optimizing the weights of the network to minimize the error between the predicted output and the actual output.
+## Overview
 
-## Algorithm Steps
-1. **Initialization**: Initialize the weights and biases of the neural network randomly or using predefined values.
-2. **Forward Pass**: Perform a forward pass through the network:
-    - Input the training data.
-    - Compute the weighted sum of inputs and biases at each neuron in the network.
-    - Apply an activation function to the weighted sum to obtain the output of each neuron.
-    - Pass the outputs of each layer as inputs to the next layer.
-3. **Error Computation**: Calculate the error between the predicted output and the actual output using a loss function.
-4. **Backward Pass (Gradient Descent)**: Perform a backward pass through the network to update the weights and biases:
-    - Compute the gradient of the loss function with respect to the weights and biases using the chain rule of calculus.
-    - Update the weights and biases in the direction that minimizes the error using gradient descent.
-5. **Repeat**: Repeat steps 2-4 for a specified number of iterations or until the error converges to a minimum threshold.
-6. **Evaluation**: Evaluate the performance of the trained model on validation or test data to assess its generalization ability.
+This Streamlit web application performs credit card fraud detection using two machine learning algorithms: Decision Tree and Naive Bayes. It allows users to upload a CSV file containing credit card transaction data and provides insights into the dataset, such as missing values, feature analysis, and model performance evaluation.
 
-## Activation Functions
-Commonly used activation functions include:
-- Sigmoid
-- Hyperbolic tangent (tanh)
-- ReLU (Rectified Linear Unit)
-- Leaky ReLU
-- Softmax (for output layer in multi-class classification)
+### Libraries Used
 
-## Loss Functions
-Popular loss functions for different types of tasks include:
-- Mean Squared Error (MSE) for regression tasks
-- Binary Cross-Entropy for binary classification tasks
-- Categorical Cross-Entropy for multi-class classification tasks
+- Pandas: For data manipulation
+- Matplotlib and Seaborn: For data visualization
+- Scikit-learn: For machine learning algorithms and evaluation metrics
+- Streamlit: For creating the web application interface
+- Missingno: For visualizing missing values in the dataset
+- Graphviz: For visualizing decision tree models
 
-## Regularization Techniques
-To prevent overfitting, regularization techniques like L1 and L2 regularization can be applied to the weights of the network.
+## Functionality
 
-## Optimization Algorithms
-Various optimization algorithms such as Stochastic Gradient Descent (SGD), Adam, RMSprop, etc., can be used to update the weights and biases efficiently during training.
+### Upload and Configure
 
-## Application
-Backpropagation is widely used in various applications including image recognition, natural language processing, recommendation systems, and more.
+Users can upload a CSV file containing credit card transaction data via the sidebar. They can then select the machine learning algorithm (Decision Tree or Naive Bayes) to perform fraud detection.
 
-## Resources
-- "Neural Networks and Deep Learning" by Michael Nielsen
-- "Deep Learning" by Ian Goodfellow, Yoshua Bengio, and Aaron Courville
+### Dataset Preview
 
-## Links:
-- [Streamlit App](https://backpropagat.streamlit.app/)
-- [Medium Article](https://medium.com/@vaishnavisathiyamoorthy/backprobagation-algorithm-5198d0c7065d)
+The application displays the first five rows of the dataset to provide users with a preview of the data.
+
+### Dataset Information
+
+Information about the dataset, including the number of rows, columns, and data types, is displayed.
+
+### Missing Values
+
+The application identifies and displays missing values in the dataset, along with a visualization of the missing values using a bar chart.
+
+### Feature Analysis
+
+Users can explore the distribution of features in the dataset using boxplots.
+
+### Model Performance
+
+#### Decision Tree
+
+The application trains a Decision Tree classifier on the dataset and evaluates its performance using a confusion matrix and accuracy score. It also visualizes the decision tree model.
+
+#### Naive Bayes
+
+Similarly, the application trains a Naive Bayes classifier and evaluates its performance using a confusion matrix and accuracy score.
+
+### Accuracy Comparison
+
+The application compares the accuracy of the Decision Tree and Naive Bayes classifiers using a bar chart.
+
+## Usage
+
+To use the application, follow these steps:
+
+1. Upload a CSV file containing credit card transaction data.
+2. Select the machine learning algorithm (Decision Tree or Naive Bayes) to perform fraud detection.
+3. Explore dataset insights, such as missing values and feature analysis.
+4. Evaluate model performance using confusion matrices and accuracy scores.
+5. Compare the accuracy of different classifiers using a bar chart.
+
+## Conclusion
+
+This Streamlit web application provides a user-friendly interface for credit card fraud detection, allowing users to analyze datasets, train machine learning models, and evaluate model performance.
 
