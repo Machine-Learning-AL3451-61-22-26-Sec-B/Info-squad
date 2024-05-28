@@ -37,6 +37,6 @@ Contributions are welcome! If you have suggestions or find any issues, feel free
 
 
 ## Links:
-- [Streamlit App](https://backpropagat.streamlit.app/)
+- [Streamlit App](https://mlweek5.streamlit.app/)
 - [Medium Article](https://medium.com/@vikramkaruppannan6807/bayesian-network-87411aa4c641)
 
