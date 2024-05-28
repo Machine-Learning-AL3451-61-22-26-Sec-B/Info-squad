@@ -28,6 +28,6 @@ Local Weighted Regression is useful for capturing non-linear relationships in da
 
 ## Links:
 - [Streamlit App](https://infosquad9.streamlit.app/)
-- [Medium Article](https://medium.com/@vaishnavisathiyamoorthy/backprobagation-algorithm-5198d0c7065d)
+- [Medium Article](https://medium.com/@pravinelango66/locally-weighted-regression-algorithm-51967dd21ccc)
 
 
