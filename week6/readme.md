@@ -36,7 +36,7 @@ To use the application, users can interact with the interface to select their sy
 
 ## Links:
 - [Streamlit App](https://infosquad6.streamlit.app/)
-- [Medium Article](https://medium.com/@vaishnavisathiyamoorthy/backprobagation-algorithm-5198d0c7065d)
+- [Medium Article](https://medium.com/@vikramkaruppannan6807/bayesian-network-87411aa4c641)
 
 
 
