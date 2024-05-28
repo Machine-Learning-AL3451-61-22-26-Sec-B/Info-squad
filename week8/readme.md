@@ -42,6 +42,6 @@ The Iris dataset is used for this classification task. It contains measurements 
 
 ## Links:
 - [Streamlit App](https://infosquad8.streamlit.app/)
-- [Medium Article](https://medium.com/@vaishnavisathiyamoorthy/backprobagation-algorithm-5198d0c7065d)
+- [Medium Article](https://medium.com/@pravinelango66/k-nearest-neighbour-algorithm-dbce89f4d79a)
 
 
