@@ -42,7 +42,7 @@ The uploaded dataset should be in CSV format, where each row represents an insta
 
 ## Links:
 
-- [Streamlit App](https://exer22.streamlit.app/)
+- [Streamlit App](https://infosquad1.streamlit.app/)
 - [Medium Article](https://medium.com/@vaishnavisathiyamoorthy/id3-algorithm-fffd1f042abd)
 
 
