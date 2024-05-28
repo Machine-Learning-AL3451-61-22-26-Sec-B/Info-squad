@@ -21,12 +21,10 @@ The Iris dataset is used for this analysis. It contains measurements of sepal an
 ## Clustering Results
 
 ### GMM Clustering Results
-![GMM Clustering Results](https://plotly.com/~streamlit/11.png?share_key=wGt7IyWWjRzXhoVlUP3oFQ)
 
 The scatter matrix shows the clustering results obtained by the Gaussian Mixture Model (GMM) algorithm. Each point represents an instance in the dataset, colored according to the assigned cluster. The shape of the point indicates the species of the iris flower.
 
 ### k-Means Clustering Results
-![k-Means Clustering Results](https://plotly.com/~streamlit/14.png?share_key=R9u9SQJB9qzZ1JQpG8DRC4)
 
 Similarly, the scatter matrix displays the clustering results obtained by the k-Means algorithm. Each point represents an instance in the dataset, colored by the assigned cluster and shaped according to the species of the iris flower.
 
@@ -35,6 +33,6 @@ This application demonstrates clustering analysis using two different algorithms
 
 ## Links:
 - [Streamlit App](https://info12.streamlit.app/)
-- [Medium Article](https://medium.com/@vaishnavisathiyamoorthy/backprobagation-algorithm-5198d0c7065d)
+- [Medium Article](https://medium.com/@vikramkaruppannan6807/em-algorithm-0a4b70533919)
 
 
