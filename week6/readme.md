@@ -35,7 +35,7 @@ Variable Elimination is performed for inference. Users can select their symptoms
 To use the application, users can interact with the interface to select their symptoms and obtain the probability of having COVID-19.
 
 ## Links:
-- [Streamlit App](https://backpropagat.streamlit.app/)
+- [Streamlit App](https://infosquad6.streamlit.app/)
 - [Medium Article](https://medium.com/@vaishnavisathiyamoorthy/backprobagation-algorithm-5198d0c7065d)
 
 
