@@ -42,7 +42,7 @@ def plot_lwr(tau):
 bg_img = '''
     <style>
     .stApp {
-        background-image: url("https://iiot-world-com.b-cdn.net/wp-content/uploads/2021/02/future-artificial-intelligence-robot-cyborg.jpg");
+        background: black;
         background-size: cover;
         background-repeat: no-repeat;
         background-attachment: fixed;
