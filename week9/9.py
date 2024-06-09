@@ -1,6 +1,5 @@
-import pandas as pd 
-import numpy as np 
-import matplotlib.pyplot as plt 
+import numpy as np
+import matplotlib.pyplot as plt
 import streamlit as st
 
 # Define the data
@@ -38,7 +37,32 @@ def plot_lwr(tau):
     return plt
 
 # Streamlit app
-st.title("Local Weighted Regression Visualization")
+
+# Background image and custom title/subtitle styles
+bg_img = '''
+    <style>
+    .stApp {
+        background-image: url("https://img.freepik.com/free-photo/businessman-working-futuristic-office_23-2151003702.jpg?t=st=1717914299~exp=1717917899~hmac=8dc2e270534039993e17cc88b32833e546847de3ddbab1d089da8e3fb915c83d&w=996");
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+    }
+    </style>
+    '''
+html_title = """
+    <div style="text-align: center;">
+        <h1 style="color: yellow;">22AIB - INFO SQUAD</h1>
+    </div>
+"""
+html_subtitle = """
+    <div style="text-align: center;">
+        <h2 style="color: yellow;">Local Weighted Regression Visualization</h2>
+    </div>
+"""
+# Add HTML and CSS to the Streamlit app
+st.markdown(bg_img, unsafe_allow_html=True)
+st.markdown(html_title, unsafe_allow_html=True)
+st.markdown(html_subtitle, unsafe_allow_html=True)
 st.write("This app visualizes Local Weighted Regression on a sine function.")
 
 # Tau input
