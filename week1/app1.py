@@ -72,7 +72,7 @@ html_subtitle = """
 page_bg_img = '''
 <style>
 .stApp {
-    background-image: url("https://png.pngtree.com/thumb_back/fh260/background/20230722/pngtree-laser-light-burst-a-futuristic-black-technology-concept-image_3782795.jpg");
+    background-image: url("https://techcrunch.com/wp-content/uploads/2016/03/machinelearning.jpg");
     background-size: cover;
     background-repeat: no-repeat;
     background-attachment: fixed;
