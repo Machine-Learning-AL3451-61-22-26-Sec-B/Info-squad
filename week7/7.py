@@ -1,59 +1,89 @@
-import streamlit as st
 import pandas as pd
 import numpy as np
-from sklearn.datasets import load_iris
-from sklearn.mixture import GaussianMixture
+import matplotlib.pyplot as plt
+import streamlit as st
 from sklearn.cluster import KMeans
-from sklearn.metrics import silhouette_score
-import plotly.express as px
+from sklearn import preprocessing
+from sklearn.mixture import GaussianMixture
+from sklearn.datasets import load_iris
+import sklearn.metrics as sm  # Import sklearn.metrics as sm
+
+# Title and introduction
+
+# Background image and custom HTML titles
+bg_img = '''
+    <style>
+    .stApp {
+        background-image: url("https://img.freepik.com/free-photo/businessman-working-futuristic-office_23-2151003702.jpg?t=st=1717914299~exp=1717917899~hmac=8dc2e270534039993e17cc88b32833e546847de3ddbab1d089da8e3fb915c83d&w=996");
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+    }
+    </style>
+'''
+st.markdown(bg_img, unsafe_allow_html=True)
+
+html_title = """
+    <div style="text-align: center;">
+        <h1 style="color: yellow;">22AIB - INFO SQUAD</h1>
+    </div>
+"""
+st.markdown(html_title, unsafe_allow_html=True)
+
+html_subtitle = """
+    <div style="text-align: center;">
+        <h2 style="color: yellow;">EM And K-means Algorithm</h2>
+    </div>
+"""
+st.markdown(html_subtitle, unsafe_allow_html=True)
+
+st.write("""
+This app performs clustering analysis on the Iris dataset using KMeans and Gaussian Mixture Model (GMM).
+""")
 
 # Load the dataset
-@st.cache
-def load_data():
-    data = load_iris()
-    df = pd.DataFrame(data.data, columns=data.feature_names)
-    df['target'] = data.target
-    return df
+dataset = load_iris()
+X = pd.DataFrame(dataset.data, columns=['Sepal_Length', 'Sepal_Width', 'Petal_Length', 'Petal_Width'])
+y = pd.DataFrame(dataset.target, columns=['Targets'])
 
-df = load_data()
+# Plotting
+fig, axes = plt.subplots(1, 3, figsize=(21, 7))
+colormap = np.array(['red', 'lime', 'black'])
 
-# Extract features for clustering
-X = df.drop(columns=['target'])
+# REAL PLOT
+axes[0].scatter(X.Petal_Length, X.Petal_Width, c=colormap[y.Targets], s=40)
+axes[0].set_title('Real')
 
-# Apply Gaussian Mixture Model (EM algorithm)
-gmm = GaussianMixture(n_components=3, random_state=42)
-gmm_labels = gmm.fit_predict(X)
-df['GMM Cluster'] = gmm_labels
+# K-PLOT
+model = KMeans(n_clusters=3)
+model.fit(X)
+predY = np.choose(model.labels_, [0, 1, 2]).astype(np.int64)
+axes[1].scatter(X.Petal_Length, X.Petal_Width, c=colormap[predY], s=40)
+axes[1].set_title('KMeans')
 
-# Apply k-Means algorithm
-kmeans = KMeans(n_clusters=3, random_state=42)
-kmeans_labels = kmeans.fit_predict(X)
-df['kMeans Cluster'] = kmeans_labels
+# GMM PLOT
+scaler = preprocessing.StandardScaler()
+scaler.fit(X)
+xsa = scaler.transform(X)
+xs = pd.DataFrame(xsa, columns=X.columns)
+gmm = GaussianMixture(n_components=3)
+gmm.fit(xs)
+y_cluster_gmm = gmm.predict(xs)
+axes[2].scatter(X.Petal_Length, X.Petal_Width, c=colormap[y_cluster_gmm], s=40)
+axes[2].set_title('GMM Classification')
 
-# Calculate silhouette scores
-gmm_silhouette = silhouette_score(X, gmm_labels)
-kmeans_silhouette = silhouette_score(X, kmeans_labels)
+st.pyplot(fig)
 
-# Streamlit app
-st.title('Clustering with EM Algorithm and k-Means')
+# Display dataset
+st.subheader("Iris Dataset")
+st.write(X.head())
 
-st.write('## Dataset')
-st.write(df.head())
+# Display cluster results
+st.subheader("Cluster Labels")
+st.write("KMeans Clusters:", predY)
+st.write("GMM Clusters:", y_cluster_gmm)
 
-st.write('## Silhouette Scores')
-st.write(f'GMM Silhouette Score: {gmm_silhouette:.4f}')
-st.write(f'k-Means Silhouette Score: {kmeans_silhouette:.4f}')
-
-st.write('## Clustering Results')
-
-# Plot the clustering results using Plotly
-fig1 = px.scatter_matrix(df, dimensions=df.columns[:-3], color='GMM Cluster', 
-                         title='GMM Clustering Results', symbol='target')
-fig2 = px.scatter_matrix(df, dimensions=df.columns[:-3], color='kMeans Cluster', 
-                         title='k-Means Clustering Results', symbol='target')
-
-st.plotly_chart(fig1)
-st.plotly_chart(fig2)
-
-st.write('## Note')
-st.write('In this example, we used the Iris dataset. For a real-world application, consider using more comprehensive and current data, and tuning the parameters of the clustering algorithms for better results.')
+# Calculate and display metrics
+st.subheader("Clustering Metrics")
+st.write("KMeans Homogeneity Score:", sm.homogeneity_score(y.Targets, predY))
+st.write("GMM Homogeneity Score:", sm.homogeneity_score(y.Targets, y_cluster_gmm))
