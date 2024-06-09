@@ -5,8 +5,35 @@ from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.metrics import accuracy_score, classification_report
 
+# HTML and CSS for background and titles
+bg_img = '''
+    <style>
+    .stApp {
+        background-image: url("https://img.freepik.com/free-photo/businessman-working-futuristic-office_23-2151003702.jpg?t=st=1717914299~exp=1717917899~hmac=8dc2e270534039993e17cc88b32833e546847de3ddbab1d089da8e3fb915c83d&w=996");
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+    }
+    </style>
+    '''
+html_title = """
+    <div style="text-align: center;">
+        <h1 style="color: yellow;">22AIB - INFO SQUAD</h1>
+    </div>
+"""
+html_subtitle = """
+    <div style="text-align: center;">
+        <h2 style="color: yellow;">K-Nearest Neighbour Algorithm</h2>
+    </div>
+"""
+
+# Add HTML and CSS to the Streamlit app
+st.markdown(bg_img, unsafe_allow_html=True)
+st.markdown(html_title, unsafe_allow_html=True)
+st.markdown(html_subtitle, unsafe_allow_html=True)
+
 # Load the dataset
-@st.cache
+@st.cache_data
 def load_data():
     data = load_iris()
     df = pd.DataFrame(data.data, columns=data.feature_names)
@@ -37,7 +64,7 @@ accuracy = accuracy_score(y_test, y_pred)
 st.write('## Classification Report')
 st.write(classification_report(y_test, y_pred, target_names=load_iris().target_names))
 
-# Streamlit app
+# Streamlit app content
 st.title('k-Nearest Neighbors Classifier for Iris Dataset')
 
 st.write('## Dataset')

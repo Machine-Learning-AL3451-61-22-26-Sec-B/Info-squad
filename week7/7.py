@@ -1,11 +1,16 @@
-import streamlit as st
 import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import streamlit as st
+from sklearn.cluster import KMeans
+from sklearn import preprocessing
+from sklearn.mixture import GaussianMixture
 from sklearn.datasets import load_iris
-from sklearn.model_selection import train_test_split
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn.metrics import accuracy_score, classification_report
+import sklearn.metrics as sm  # Import sklearn.metrics as sm
 
-# HTML and CSS for background and titles
+# Title and introduction
+
+# Background image and custom HTML titles
 bg_img = '''
     <style>
     .stApp {
@@ -15,78 +20,70 @@ bg_img = '''
         background-attachment: fixed;
     }
     </style>
-    '''
+'''
+st.markdown(bg_img, unsafe_allow_html=True)
+
 html_title = """
     <div style="text-align: center;">
         <h1 style="color: yellow;">22AIB - INFO SQUAD</h1>
     </div>
 """
+st.markdown(html_title, unsafe_allow_html=True)
+
 html_subtitle = """
     <div style="text-align: center;">
-        <h2 style="color: yellow;">K-Nearest Neighbour Algorithm</h2>
+        <h2 style="color: yellow;">EM And K-means Algorithm</h2>
     </div>
 """
-
-# Add HTML and CSS to the Streamlit app
-st.markdown(bg_img, unsafe_allow_html=True)
-st.markdown(html_title, unsafe_allow_html=True)
 st.markdown(html_subtitle, unsafe_allow_html=True)
 
+st.write("""
+This app performs clustering analysis on the Iris dataset using KMeans and Gaussian Mixture Model (GMM).
+""")
+
 # Load the dataset
-@st.cache_data
-def load_data():
-    data = load_iris()
-    df = pd.DataFrame(data.data, columns=data.feature_names)
-    df['target'] = data.target
-    return df
+dataset = load_iris()
+X = pd.DataFrame(dataset.data, columns=['Sepal_Length', 'Sepal_Width', 'Petal_Length', 'Petal_Width'])
+y = pd.DataFrame(dataset.target, columns=['Targets'])
 
-df = load_data()
+# Plotting
+fig, axes = plt.subplots(1, 3, figsize=(21, 7))
+colormap = np.array(['red', 'lime', 'black'])
 
-# Split the data into features and target
-X = df.drop(columns=['target'])
-y = df['target']
+# REAL PLOT
+axes[0].scatter(X.Petal_Length, X.Petal_Width, c=colormap[y.Targets], s=40)
+axes[0].set_title('Real')
 
-# Split the data into training and testing sets
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+# K-PLOT
+model = KMeans(n_clusters=3)
+model.fit(X)
+predY = np.choose(model.labels_, [0, 1, 2]).astype(np.int64)
+axes[1].scatter(X.Petal_Length, X.Petal_Width, c=colormap[predY], s=40)
+axes[1].set_title('KMeans')
 
-# Train the k-Nearest Neighbors classifier
-n_neighbors = st.sidebar.slider('Number of neighbors', min_value=1, max_value=10, value=5)
-knn = KNeighborsClassifier(n_neighbors=n_neighbors)
-knn.fit(X_train, y_train)
+# GMM PLOT
+scaler = preprocessing.StandardScaler()
+scaler.fit(X)
+xsa = scaler.transform(X)
+xs = pd.DataFrame(xsa, columns=X.columns)
+gmm = GaussianMixture(n_components=3)
+gmm.fit(xs)
+y_cluster_gmm = gmm.predict(xs)
+axes[2].scatter(X.Petal_Length, X.Petal_Width, c=colormap[y_cluster_gmm], s=40)
+axes[2].set_title('GMM Classification')
 
-# Make predictions
-y_pred = knn.predict(X_test)
+st.pyplot(fig)
 
-# Calculate accuracy
-accuracy = accuracy_score(y_test, y_pred)
+# Display dataset
+st.subheader("Iris Dataset")
+st.write(X.head())
 
-# Print classification report
-st.write('## Classification Report')
-st.write(classification_report(y_test, y_pred, target_names=load_iris().target_names))
+# Display cluster results
+st.subheader("Cluster Labels")
+st.write("KMeans Clusters:", predY)
+st.write("GMM Clusters:", y_cluster_gmm)
 
-# Streamlit app content
-st.title('k-Nearest Neighbors Classifier for Iris Dataset')
-
-st.write('## Dataset')
-st.write(df.head())
-
-st.write('## Model Performance')
-st.write(f'Accuracy: {accuracy:.4f}')
-
-st.write('## Sample Predictions')
-correct_predictions = []
-wrong_predictions = []
-
-for i in range(len(y_pred)):
-    if y_pred[i] == y_test.iloc[i]:
-        correct_predictions.append((X_test.iloc[i], y_test.iloc[i], y_pred[i]))
-    else:
-        wrong_predictions.append((X_test.iloc[i], y_test.iloc[i], y_pred[i]))
-
-st.write('### Correct Predictions')
-for features, true_label, predicted_label in correct_predictions:
-    st.write(f'Features: {features.values}, True Label: {load_iris().target_names[true_label]}, Predicted Label: {load_iris().target_names[predicted_label]}')
-
-st.write('### Wrong Predictions')
-for features, true_label, predicted_label in wrong_predictions:
-    st.write(f'Features: {features.values}, True Label: {load_iris().target_names[true_label]}, Predicted Label: {load_iris().target_names[predicted_label]}')
+# Calculate and display metrics
+st.subheader("Clustering Metrics")
+st.write("KMeans Homogeneity Score:", sm.homogeneity_score(y.Targets, predY))
+st.write("GMM Homogeneity Score:", sm.homogeneity_score(y.Targets, y_cluster_gmm))
