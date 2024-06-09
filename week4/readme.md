@@ -1,4 +1,4 @@
-# Credit Card Fraud Detection
+# Naive Bayesian Classifier
 
 ## Overview
 
