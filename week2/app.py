@@ -1,155 +1,112 @@
-import streamlit as st
 import pandas as pd
 import numpy as np
-import sklearn
+from collections import Counter
+import streamlit as st
 
-from sklearn.preprocessing import LabelEncoder
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import accuracy_score
+# Calculate entropy
+def entropy(y):
+    class_counts = Counter(y)
+    total_instances = len(y)
+    entropy_value = -sum((count/total_instances) * np.log2(count/total_instances) for count in class_counts.values())
+    return entropy_value
 
-class Node:
-    def __init__(self, feature=None, value=None, leaf_class=None):
-        self.feature = feature        # Feature index
-        self.value = value            # Value to split on (for numerical features)
-        self.leaf_class = leaf_class  # Class label if node is a leaf
-        self.children = {}            # Dictionary to store children nodes
+# Calculate information gain
+def information_gain(X, y, attribute):
+    total_entropy = entropy(y)
+    values, counts = np.unique(X[attribute], return_counts=True)
+    
+    weighted_entropy = sum((counts[i]/sum(counts)) * entropy(y[X[attribute] == values[i]]) for i in range(len(values)))
+    gain = total_entropy - weighted_entropy
+    return gain
 
-class DecisionTreeID3:
-    def __init__(self):
-        self.root = None
+# ID3 algorithm
+def id3(X, y, attributes):
+    if len(np.unique(y)) == 1:
+        return np.unique(y)[0]
+    
+    if len(attributes) == 0:
+        return Counter(y).most_common()[0][0]
+    
+    gains = [information_gain(X, y, attribute) for attribute in attributes]
+    best_attr = attributes[np.argmax(gains)]
+    
+    tree = {best_attr: {}}
+    for value in np.unique(X[best_attr]):
+        sub_X = X[X[best_attr] == value].drop(columns=[best_attr])
+        sub_y = y[X[best_attr] == value]
+        subtree = id3(sub_X, sub_y, [attr for attr in attributes if attr != best_attr])
+        tree[best_attr][value] = subtree
+    
+    return tree
 
-    def entropy(self, y):
-        classes, counts = np.unique(y, return_counts=True)
-        entropy_val = 0
-        total_samples = len(y)
-        for count in counts:
-            p = count / total_samples
-            entropy_val -= p * np.log2(p)
-        return entropy_val
+# Classify a new sample
+def classify(tree, sample):
+    if not isinstance(tree, dict):
+        return tree
+    attribute = next(iter(tree))
+    if sample[attribute] in tree[attribute]:
+        return classify(tree[attribute][sample[attribute]], sample)
+    else:
+        return None
 
-    def information_gain(self, X, y, feature, split_value=None):
-        parent_entropy = self.entropy(y)
-        if split_value is not None:
-            left_indices = X[:, feature] <= split_value
-            right_indices = ~left_indices
-            left_child_entropy = self.entropy(y[left_indices])
-            right_child_entropy = self.entropy(y[right_indices])
-            n_left = np.sum(left_indices)
-            n_right = np.sum(right_indices)
-            n_total = len(y)
-            child_entropy = (n_left / n_total) * left_child_entropy + (n_right / n_total) * right_child_entropy
-        else:
-            values = np.unique(X[:, feature])
-            child_entropy = 0
-            for value in values:
-                indices = X[:, feature] == value
-                child_entropy += (np.sum(indices) / len(y)) * self.entropy(y[indices])
-        return parent_entropy - child_entropy
-
-    def find_best_split(self, X, y):
-        max_info_gain = -np.inf
-        best_feature = None
-        best_split_value = None
-        for feature in range(X.shape[1]):
-            values = np.unique(X[:, feature])
-            for value in values:
-                info_gain = self.information_gain(X, y, feature, split_value=value)
-                if info_gain > max_info_gain:
-                    max_info_gain = info_gain
-                    best_feature = feature
-                    best_split_value = value
-        return best_feature, best_split_value
-
-    def fit(self, X, y):
-        self.root = self._fit(X, y)
-
-    def _fit(self, X, y):
-        if len(np.unique(y)) == 1:
-            return Node(leaf_class=y[0])
-        elif X.shape[1] == 0:
-            return Node(leaf_class=np.argmax(np.bincount(y)))
-        else:
-            best_feature, best_split_value = self.find_best_split(X, y)
-            if best_feature is None:
-                return Node(leaf_class=np.argmax(np.bincount(y)))
-            node = Node(feature=best_feature, value=best_split_value)
-            if best_split_value is not None:
-                left_indices = X[:, best_feature] <= best_split_value
-                right_indices = ~left_indices
-                node.children['left'] = self._fit(X[left_indices], y[left_indices])
-                node.children['right'] = self._fit(X[right_indices], y[right_indices])
-            else:
-                values = np.unique(X[:, best_feature])
-                for value in values:
-                    indices = X[:, best_feature] == value
-                    node.children[value] = self._fit(X[indices], y[indices])
-            return node
-
-    def predict(self, X):
-        return np.array([self._predict(x, self.root) for x in X])
-
-    def _predict(self, x, node):
-        if node.leaf_class is not None:
-            return node.leaf_class
-        else:
-            if node.value is not None:
-                if x[node.feature] <= node.value:
-                    return self._predict(x, node.children['left'])
-                else:
-                    return self._predict(x, node.children['right'])
-            else:
-                return self._predict(x, node.children[x[node.feature]])
-
-@st.cache
-def load_data():
-    return pd.read_csv("trainingdata.csv")  # Replace "your_dataset.csv" with your dataset file name
-
-def preprocess_data(df):
-    label_encoders = [LabelEncoder() for _ in range(df.shape[1])]
-    for i, encoder in enumerate(label_encoders):
-        df.iloc[:, i] = encoder.fit_transform(df.iloc[:, i])
-    return df
-
+# Streamlit app
 def main():
-    st.title("Decision Tree Classifier")
+    # Inject CSS for background image
+    page_bg_img = '''
+    <style>
+    .stApp {
+        background-image: url("https://cdn-gcp.new.marutitech.com/robot_humanoid_using_tablet_computer_big_data_analytic_1_94eab7101e.jpg");
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+    }
+    </style>
+    '''
+    # Inject CSS with st.markdown
+    st.markdown(page_bg_img, unsafe_allow_html=True)
+    
+    # Display the titles using st.markdown
+    html_title = """
+        <div style="text-align: center;">
+            <h1 style="color: red;">22AIB - INFO SQUAD</h1>
+        </div>
+    """
+    html_subtitle = """
+        <div style="text-align: center;">
+            <h2 style="color: red;">ID3 Decision Tree Classifier</h2>
+        </div>
+    """
+    st.markdown(html_title, unsafe_allow_html=True)
+    st.markdown(html_subtitle, unsafe_allow_html=True)
 
-    st.sidebar.header("Upload your dataset")
-    uploaded_file = st.sidebar.file_uploader("Choose a CSV file", type="csv")
+
+    uploaded_file = st.file_uploader("Upload your CSV file", type="csv")
+    
     if uploaded_file is not None:
         df = pd.read_csv(uploaded_file)
-        st.sidebar.write(df.head())
+        st.write("Data Preview:")
+        st.write(df)
 
-        X = df.iloc[:, :-1]
-        y = df.iloc[:, -1]
-
-        X = preprocess_data(X)
-
-        # Split the dataset into training and testing sets
-        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-
-        # Train the decision tree model
-        tree = DecisionTreeID3()
-        tree.fit(X_train.values, y_train.values)
-
-        st.header("Decision Tree Visualization")
-        st.write("Visualize the decision tree here.")
-
-        st.header("Make Predictions")
-        st.write("Enter values for the features to predict the class:")
-        new_sample = []
-        for i in range(X.shape[1]):
-            new_sample.append(st.number_input(f"Feature {i+1}", value=X.iloc[0, i]))
-        new_sample = np.array(new_sample)
-
-        if st.button("Predict"):
-            predicted_class = tree.predict(new_sample.reshape(1, -1))
-            st.write(f"The predicted class is: {predicted_class[0]}")
-
-            # Evaluate the model's accuracy
-            y_pred = tree.predict(X_test.values)
-            accuracy = accuracy_score(y_test.values, y_pred)
-            st.write(f"Accuracy: {accuracy:.2f}")
-
+        # Specify the target column
+        target_column = st.selectbox("Select the target column", df.columns)
+        if target_column:
+            X = df.drop(columns=[target_column])
+            y = df[target_column]
+            
+            attributes = X.columns.tolist()
+            tree = id3(X, y, attributes)
+            
+            st.write("Decision Tree:")
+            st.write(tree)
+            
+            st.write("Classify a new sample:")
+            sample = {}
+            for attr in attributes:
+                sample[attr] = st.selectbox(f"Select {attr}", df[attr].unique())
+                
+            if st.button("Classify"):
+                result = classify(tree, sample)
+                st.write(f"The class is: {result}")
 
 if __name__ == "__main__":
     main()
