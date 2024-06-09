@@ -118,7 +118,7 @@ import streamlit as st
 bg_img = '''
     <style>
     .stApp {
-        background-image: url("https://miro.medium.com/v2/resize:fit:800/1*hz-GU2BRL_rq3cXvC2NDSg.jpeg");
+        background: black;
         background-size: cover;
         background-repeat: no-repeat;
         background-attachment: fixed;
