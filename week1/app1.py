@@ -72,7 +72,7 @@ html_subtitle = """
 page_bg_img = '''
 <style>
 .stApp {
-    background-image: url("https://i0.wp.com/eos.org/wp-content/uploads/2020/07/data-streams-eos-august.png?fit=820%2C615&ssl=1");
+    background: grey;
     background-size: cover;
     background-repeat: no-repeat;
     background-attachment: fixed;
