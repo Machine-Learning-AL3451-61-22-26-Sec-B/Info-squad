@@ -9,7 +9,7 @@ def main():
     bg_img = '''
         <style>
         .stApp {
-            background-image: url("https://conciliac.com/wp-content/uploads/2023/07/nota-2-julio-1.webp");
+            background: black;
             background-size: cover;
             background-repeat: no-repeat;
             background-attachment: fixed;
