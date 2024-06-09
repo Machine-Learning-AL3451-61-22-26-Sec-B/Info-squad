@@ -1,63 +1,99 @@
-import streamlit as st
 import numpy as np
+import streamlit as st
 
-def sigmoid(x):
-    return 1 / (1 + np.exp(-x))
+# HTML code for setting background image and displaying titles
+bg_img = '''
+    <style>
+    .stApp {
+        background-image: url("https://img.freepik.com/free-photo/businessman-working-futuristic-office_23-2151003702.jpg?t=st=1717914299~exp=1717917899~hmac=8dc2e270534039993e17cc88b32833e546847de3ddbab1d089da8e3fb915c83d&w=996");
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+    }
+    </style>
+    '''
+html_title = """
+    <div style="text-align: center;">
+        <h1 style="color: red;">22AIB - INFO SQUAD</h1>
+    </div>
+"""
+html_subtitle = """
+    <div style="text-align: center;">
+        <h2 style="color: red;">Backpropagation Algorithm</h2>
+    </div>
+"""
 
-def sigmoid_grad(x):
-    return x * (1 - x)
+# Neural Network class
+class Neural_Network(object):
+    def __init__(self):
+        self.inputSize = 2
+        self.outputSize = 1
+        self.hiddenSize = 3
+        self.W1 = np.random.randn(self.inputSize, self.hiddenSize)
+        self.W2 = np.random.randn(self.hiddenSize, self.outputSize)
 
-def neural_network(X, y, epoch=1000, eta=0.2):
-    input_neurons = 2
-    hidden_neurons = 3
-    output_neurons = 1
+    def forward(self, X):
+        self.z = np.dot(X, self.W1)
+        self.z2 = self.sigmoid(self.z)
+        self.z3 = np.dot(self.z2, self.W2)
+        o = self.sigmoid(self.z3)
+        return o 
+
+    def sigmoid(self, s):
+        return 1/(1+np.exp(-s))
+
+    def sigmoidPrime(self, s):
+        return s * (1 - s)
     
-    wh = np.random.uniform(size=(input_neurons, hidden_neurons))
-    bh = np.random.uniform(size=(1, hidden_neurons))
-    wout = np.random.uniform(size=(hidden_neurons, output_neurons))
-    bout = np.random.uniform(size=(1, output_neurons))
-    
-    for i in range(epoch):
-        h_ip = np.dot(X, wh) + bh
-        h_act = sigmoid(h_ip)
-        o_ip = np.dot(h_act, wout) + bout
-        output = sigmoid(o_ip)
+    def backward(self, X, y, o):
+        self.o_error = y - o
+        self.o_delta = self.o_error*self.sigmoidPrime(o)
+        self.z2_error = self.o_delta.dot(self.W2.T)
+        self.z2_delta = self.z2_error*self.sigmoidPrime(self.z2)
+        self.W1 += X.T.dot(self.z2_delta)
+        self.W2 += self.z2.T.dot(self.o_delta)
 
-        Eo = y - output
-        outgrad = sigmoid_grad(output)
-        d_output = Eo * outgrad
+    def train (self, X, y):
+        o = self.forward(X)
+        self.backward(X, y, o)
 
-        Eh = d_output.dot(wout.T)
-        hiddengrad = sigmoid_grad(h_act)
-        d_hidden = Eh * hiddengrad
-
-        wout += h_act.T.dot(d_output) * eta
-        wh += X.T.dot(d_hidden) * eta
-
-    return output
-
+# Streamlit app
 def main():
-    st.title("Neural Network Prediction")
+    # Set background image and display titles
+    st.markdown(bg_img, unsafe_allow_html=True)
+    st.markdown(html_title, unsafe_allow_html=True)
+    st.markdown(html_subtitle, unsafe_allow_html=True)
 
-    st.sidebar.header("Settings")
-    epoch = st.sidebar.number_input("Epochs", value=1000)
-    eta = st.sidebar.number_input("Learning Rate", value=0.2)
+    # Get user input for sample data
+    st.subheader("Enter Sample Data:")
+    input_1 = st.number_input("Hours of sleep:", value=2)
+    input_2 = st.number_input("Hours of study:", value=9)
 
-    X = np.array(([2, 9], [1, 5], [3, 6]), dtype=float)
-    y = np.array(([92], [86], [89]), dtype=float)
+    # Sample data
+    X = np.array([[input_1, input_2]])
+    y = np.array([[st.number_input("Test score:", value=92)]])
 
-    X_normalized = X / np.amax(X, axis=0)  # Normalize
-    y_normalized = y / 100
+    # Normalize data
+    X = X / np.amax(X, axis=0)
+    y = y / 100
 
-    if st.button("Run Neural Network"):
-        predicted_output = neural_network(X_normalized, y_normalized, epoch, eta)
-        st.subheader("Results")
-        st.write("Normalized Input:")
-        st.write(X_normalized)
-        st.write("Actual Output:")
-        st.write(y_normalized)
-        st.write("Predicted Output:")
-        st.write(predicted_output)
+    # Instantiate the neural network
+    NN = Neural_Network()
+
+    # Display original data
+    st.subheader("Original Data:")
+    st.write("Input: ", X)
+    st.write("Actual Output: ", y)
+
+    # Train the neural network
+    NN.train(X, y)
+
+    # Display predicted output and loss
+    st.subheader("Predicted Output after Training:")
+    predicted_output = NN.forward(X)
+    st.write("Predicted Output: ", predicted_output)
+    loss = np.mean(np.square(y - predicted_output))
+    st.write("Loss: ", loss)
 
 if __name__ == "__main__":
     main()
