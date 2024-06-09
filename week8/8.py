@@ -9,7 +9,7 @@ from sklearn.metrics import accuracy_score, classification_report
 bg_img = '''
     <style>
     .stApp {
-        background-image: url("https://img.freepik.com/free-photo/businessman-working-futuristic-office_23-2151003702.jpg?t=st=1717914299~exp=1717917899~hmac=8dc2e270534039993e17cc88b32833e546847de3ddbab1d089da8e3fb915c83d&w=996");
+        background: black;
         background-size: cover;
         background-repeat: no-repeat;
         background-attachment: fixed;
