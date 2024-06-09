@@ -1,82 +1,77 @@
-import pandas as pd
 import streamlit as st
-import requests
-import zipfile
-import io
-from sklearn.model_selection import train_test_split
+import pandas as pd
 from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+from sklearn.model_selection import train_test_split
 from sklearn.naive_bayes import MultinomialNB
-from sklearn import metrics
 
-# Title and introduction
-st.title("Naive Bayes Classifier for IMDb Review Classification")
-st.write("This app uses a Naive Bayes classifier to predict whether an IMDb review is positive or negative.")
+def main():
+    bg_img = '''
+        <style>
+        .stApp {
+            background-image: url("https://conciliac.com/wp-content/uploads/2023/07/nota-2-julio-1.webp");
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }
+        </style>
+        '''
+    html_title = """
+        <div style="text-align: center;">
+            <h1 style="color: white;">22AIB - INFO SQUAD</h1>
+        </div>
+    """
+    html_subtitle = """
+        <div style="text-align: center;">
+            <h2 style="color: white;">Naive Bayesian Classifier</h2>
+        </div>
+    """
 
-# URL for the dataset
-url = "https://archive.ics.uci.edu/ml/machine-learning-databases/00228/smsspamcollection.zip"
+    st.markdown(bg_img, unsafe_allow_html=True)  # Apply background image
+    st.markdown(html_title, unsafe_allow_html=True)  # Display HTML title
+    st.markdown(html_subtitle, unsafe_allow_html=True)  # Display HTML subtitle
+    
+    # Upload CSV file
+    uploaded_file = st.file_uploader("Upload CSV file", type=["csv"])
+    
+    if uploaded_file is not None:
+        data = pd.read_csv(uploaded_file)
+        
+        # Map data CATEGORY to numeric values
+        data["CATEGORY"] = data["CATEGORY"].map({"b": 1, "t": 2, "e": 3, "m": 4})
 
-# Function to download and extract data
-@st.cache_data
-def download_and_extract_data(url):
-    response = requests.get(url)
-    with zipfile.ZipFile(io.BytesIO(response.content)) as z:
-        z.extractall()
-        with open(z.namelist()[0], 'r') as file:
-            df = pd.read_csv(file, sep='\t', names=["sentiment", "text"])
-    return df
+        # Replace nan values with empty string
+        data = data.fillna("")
 
-# Download and extract the dataset
-df = download_and_extract_data(url)
+        # Split data into training and test sets
+        X_train, X_test, y_train, y_test = train_test_split(
+            data["TITLE"].values, data["CATEGORY"].values, test_size=0.3, random_state=0
+        )
 
-# Display the first five rows of the dataset
-st.subheader("First Five Rows of the Dataset")
-st.write(df.head())
+        # Extract features from the training data using CountVectorizer
+        count_vectorizer = CountVectorizer()
+        count_train = count_vectorizer.fit_transform(X_train)
 
-# Dataset information
-st.subheader("Dataset Information")
-buffer = io.StringIO()
-df.info(buf=buffer)
-s = buffer.getvalue()
-st.text(s)
+        # Extract features from the test data using CountVectorizer
+        count_test = count_vectorizer.transform(X_test)
 
-# Check for missing values
-st.subheader("Missing Values")
-st.write(df.isna().sum())
+        # Train multinomial Naive Bayes model using CountVectorizer
+        nb_classifier = MultinomialNB()
+        nb_classifier.fit(count_train, y_train)
 
-# Map sentiment to numerical values
-df['snum'] = df.sentiment.map({'ham': 1, 'spam': 0})
+        # Predict the test set using the multinomial Naive Bayes model
+        y_pred = nb_classifier.predict(count_test)
 
-# Split the dataset into features and target variable
-x = df['text']
-y = df['snum']
+        # Print the accuracy
+        st.write("Accuracy Score:", accuracy_score(y_test, y_pred))
 
-# Split the data into training and test sets
-xtrain, xtest, ytrain, ytest = train_test_split(x, y, test_size=0.3, random_state=42)
+        # Print the classification report
+        st.write("Classification Report:")
+        st.write(classification_report(y_test, y_pred))
 
-# Initialize the CountVectorizer
-cv = CountVectorizer()
-xtrain_dtm = cv.fit_transform(xtrain)
-xtest_dtm = cv.transform(xtest)
+        # Print the confusion matrix
+        st.write("Confusion Matrix:")
+        st.write(confusion_matrix(y_test, y_pred))
 
-# Initialize the MultinomialNB classifier
-clf = MultinomialNB().fit(xtrain_dtm, ytrain)
-
-# Predict the test set results
-predicted = clf.predict(xtest_dtm)
-
-# Display the confusion matrix
-st.subheader("Confusion Matrix")
-cm = metrics.confusion_matrix(ytest, predicted)
-st.write(cm)
-
-# Display the accuracy score
-st.subheader("Accuracy Score")
-accuracy = metrics.accuracy_score(ytest, predicted)
-st.write(f"Accuracy: {accuracy:.2f}")
-
-# Display precision and recall
-st.subheader("Precision and Recall")
-precision = metrics.precision_score(ytest, predicted, average='micro')
-recall = metrics.recall_score(ytest, predicted, average='micro')
-st.write(f"Precision: {precision:.2f}")
-st.write(f"Recall: {recall:.2f}")
+if __name__ == "__main__":
+    main()
