@@ -72,7 +72,7 @@ html_subtitle = """
 page_bg_img = '''
 <style>
 .stApp {
-    background: grey;
+    background: black;
     background-size: cover;
     background-repeat: no-repeat;
     background-attachment: fixed;
