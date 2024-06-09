@@ -55,7 +55,7 @@ def main():
     page_bg_img = '''
     <style>
     .stApp {
-        background-image: url("https://cdn-gcp.new.marutitech.com/robot_humanoid_using_tablet_computer_big_data_analytic_1_94eab7101e.jpg");
+        background: black;
         background-size: cover;
         background-repeat: no-repeat;
         background-attachment: fixed;
