@@ -1,4 +1,4 @@
-# Backpropagation Algorithm Implementation
+# Backpropagation Algorithm
 
 ## Introduction
 Backpropagation is a supervised learning algorithm used for training artificial neural networks. It's a key component in optimizing the weights of the network to minimize the error between the predicted output and the actual output.
