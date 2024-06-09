@@ -1,4 +1,4 @@
-# Naive Bayes Classifier for IMDb Review Classification
+# Naive Bayes Classifier using dataset
 
 ## Introduction
 This application is a Naive Bayes classifier designed to predict whether an IMDb review is positive or negative based on its sentiment. It utilizes the Multinomial Naive Bayes algorithm for classification.
