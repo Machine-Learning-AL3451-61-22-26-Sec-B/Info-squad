@@ -34,87 +34,72 @@ html_subtitle = """
 st.markdown(html_subtitle, unsafe_allow_html=True)
 
 # Title and introduction
-st.write("This app uses a Bayesian Network to classify COVID-19 symptoms based on a standard WHO dataset.")
+st.write("This app uses a Bayesian Network to classify COVID-19 symptoms based on a dataset.")
 
-# Function to create synthetic data (simulating WHO dataset structure)
-def create_synthetic_who_data():
-    np.random.seed(42)
-    size = 1000
-    data = {
-        'Fever': np.random.randint(2, size=size),
-        'Cough': np.random.randint(2, size=size),
-        'RunnyNose': np.random.randint(2, size=size),
-        'SoreThroat': np.random.randint(2, size=size),
-        'Fatigue': np.random.randint(2, size=size),
-        'Diarrhoea': np.random.randint(2, size=size),
-        'DifficultyBreathing': np.random.randint(2, size=size),
-        'LossOfTasteOrSmell': np.random.randint(2, size=size),
-        'Headache': np.random.randint(2, size=size),
-        'COVID19': np.random.randint(2, size=size),
-    }
-    df = pd.DataFrame(data)
-    return df
+# File uploader
+uploaded_file = st.file_uploader("Upload a CSV file", type=["csv"])
 
-# Generate the synthetic dataset
-df = create_synthetic_who_data()
+if uploaded_file is not None:
+    df = pd.read_csv(uploaded_file)
 
-# Display the first five rows of the dataset
-st.subheader("First Five Rows of the Dataset")
-st.write(df.head())
+    # Display the first five rows of the dataset
+    st.subheader("First Five Rows of the Dataset")
+    st.write(df.head())
 
-# Dataset description
-st.subheader("Dataset Description")
-st.write(df.describe())
+    # Dataset description
+    st.subheader("Dataset Description")
+    st.write(df.describe())
 
-# Check for missing values
-st.subheader("Missing Values")
-st.write(df.isna().sum())
+    # Check for missing values
+    st.subheader("Missing Values")
+    st.write(df.isna().sum())
 
-# Display histograms for all numeric columns
-st.subheader("Histograms")
-for column in df.select_dtypes(include=np.number).columns:
-    st.write(f"Histogram for {column}")
-    fig, ax = plt.subplots()
-    ax.hist(df[column].dropna(), bins=20)
-    st.pyplot(fig)
+    # Display histograms for all numeric columns
+    st.subheader("Histograms")
+    for column in df.select_dtypes(include=np.number).columns:
+        st.write(f"Histogram for {column}")
+        fig, ax = plt.subplots()
+        ax.hist(df[column].dropna(), bins=20)
+        st.pyplot(fig)
 
-# Define the Bayesian Network structure
-st.subheader("Bayesian Network Structure")
-model = BayesianModel([
-    ('Fever', 'Fatigue'),
-    ('Cough', 'SoreThroat'),
-    ('RunnyNose', 'Headache'),
-    ('Diarrhoea', 'COVID19'),
-    ('DifficultyBreathing', 'Fever'),
-    ('LossOfTasteOrSmell', 'COVID19'),
-    ('COVID19', 'Cough'),
-    ('SoreThroat', 'Headache'),
-    ('Fever', 'COVID19')
-])
-model.fit(df, estimator=MaximumLikelihoodEstimator)
+    # Define the Bayesian Network structure
+    st.subheader("Bayesian Network Structure")
+    model = BayesianModel([
+        ('Fever', 'Tiredness'),
+        ('Dry-Cough', 'Sore-Throat'),
+        ('Runny-Nose', 'Pains'),
+        ('Diarrhea', 'None_Sympton'),
+        ('Difficulty-in-Breathing', 'Fever'),
+        ('Nasal-Congestion', 'Runny-Nose'),
+        ('Sore-Throat', 'Tiredness'),
+        ('Fever', 'Diarrhea')
+    ])
+    model.fit(df, estimator=MaximumLikelihoodEstimator)
 
-# Display CPD values
-st.subheader("Conditional Probability Distributions (CPDs)")
-for node in model.nodes():
-    st.write(f"CPD of {node}")
-    st.text(model.get_cpds(node))
+    # Display CPD values
+    st.subheader("Conditional Probability Distributions (CPDs)")
+    for node in model.nodes():
+        st.write(f"CPD of {node}")
+        st.text(model.get_cpds(node))
 
-# Perform Variable Elimination for inference
-st.subheader("Inference using Variable Elimination")
-infer = VariableElimination(model)
+    # Perform Variable Elimination for inference
+    st.subheader("Inference using Variable Elimination")
+    infer = VariableElimination(model)
 
-symptoms = ['Fever', 'Cough', 'RunnyNose']
-evidence = {}
-for symptom in symptoms:
-    value = st.selectbox(f"Do you have {symptom}?", ('Yes', 'No', 'Not Sure'), key=symptom)
-    if value == 'Yes':
-        evidence[symptom] = 1
-    elif value == 'No':
-        evidence[symptom] = 0
+    symptoms = ['Fever', 'Dry-Cough', 'Runny-Nose']
+    evidence = {}
+    for symptom in symptoms:
+        value = st.selectbox(f"Do you have {symptom}?", ('Yes', 'No', 'Not Sure'), key=symptom)
+        if value == 'Yes':
+            evidence[symptom] = 1
+        elif value == 'No':
+            evidence[symptom] = 0
 
-if evidence:
-    target_result = infer.query(variables=["COVID19"], evidence=evidence)
-    st.write("Probability of having COVID-19 given the symptoms:")
-    st.write(target_result)
+    if evidence:
+        target_result = infer.query(variables=["None_Sympton"], evidence=evidence)
+        st.write("Probability of having COVID-19 given the symptoms:")
+        st.write(target_result)
+    else:
+        st.write("Please provide evidence for symptoms to get a prediction.")
 else:
-    st.write("Please provide evidence for symptoms to get a prediction.")
+    st.write("Please upload a CSV file to proceed.")
